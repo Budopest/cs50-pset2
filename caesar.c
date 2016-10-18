@@ -1,60 +1,52 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <cs50.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
-void encrypt(string, int k);
+char decode(char cipher, int k);
 
-int main (int argc, char* argv[])
-{
-    int k;
-    
-    /*Get the command line-argument and convert from string to int
-    If no argument is provided return 1 and printf error message*/
-    
-    if (argc == 2)
-    {
-        k = atoi(argv[1]);
-        k = k % 26; // Makes sure that the key is between 0-26
+int main(int argc, string argv[]) {
+    if (argc != 2) {
+        printf("Usage: ./caesar k\n");
+        return 1;
     }
-    else
-    {
-        printf("You have to enter a Rotation key!\n");
-        return 1; 
-    }   
-    //Get the phrase to encrypt and use function encrypt()
-    string phrase = GetString();
-    encrypt(phrase, k);
     
-    return 0;   
-}
-
-/*encrypt() needs a string and the rotation as input
-It checks if the character is upper-/lowercase or a another character*/
-
-void encrypt(string s, int k)
-{
-    char encryptedchar;
-    for (int i = 0, j = strlen(s); i < j; i++)
-    {
-        if (s[i] >= 'a' && s[i] <= 'z')
-            {
-            ((s[i] + k) > 'z') ? (encryptedchar = (s[i] + k) - 26) : (encryptedchar = (s[i] + k));
-            }
-            
-        if (s[i] >= 'A' && s[i] <= 'Z')
-            {
-            ((s[i] + k) > 'Z') ? (encryptedchar = (s[i] + k) - 26) : (encryptedchar = (s[i] + k));
-            }
-            
-        if (!((s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z')))
-            {
-            encryptedchar = s[i];
-            }
-            
-    printf("%c", encryptedchar); // Print the char every loop after it went through the if loopsls
+    int k = (atoi(argv[1]) % 26);
     
+    printf("plaintext: ");
+    string ciphertext = get_string();
+    
+    printf("ciphertext: ");
+    for (int i = 0, j = strlen(ciphertext); i < j; i++) {
+        char temp = decode(ciphertext[i], k);
+        printf("%c", temp);
     }
     printf("\n");
+    return 0;
+}
+
+char decode(char cipher, int k) {
+    int sum = (cipher + k);
+    
+    if (cipher >= 'A' && cipher <= 'Z') {
+        sum = (cipher + k);
+        if (sum > 90) {
+            return (sum % 90) + 64;
+        }
+        else {
+            return sum;
+        }
+    }
+    else if (cipher >= 'a' && cipher <= 'z') {
+        sum = (cipher + k);
+        if (sum > 122) {
+            return (sum % 122) + 96;
+        }
+        else {
+            return sum;
+        }
+    }
+    else {
+        return cipher;
+    }
 }
